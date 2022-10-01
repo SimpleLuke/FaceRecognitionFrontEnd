@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
 import ImageLinkForm from "./components/ImageLinkForm/ImageLinkForm";
 import FaceRecognition from "./components/FaceRecognition/FaceRecognition";
+import Signin from "./components/Signin/Signin";
+import Register from "./components/Register/Register";
 import Rank from "./components/Rank/Rank";
 import "tachyons";
 import ParticlesBg from "particles-bg";
@@ -16,6 +18,27 @@ const app = new Clarifai.App({
 function App() {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [box, setBox] = useState({});
+  const [route, setRoute] = useState("signin");
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const calculateFaceLocation = (data) => {
+    const clarifaiFace =
+      data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.getElementById("inputimage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - clarifaiFace.right_col * width,
+      bottomRow: height - clarifaiFace.bottom_row * height,
+    };
+  };
+
+  const displayFace = (data) => {
+    setBox(data);
+  };
 
   const onInputChange = (event) => {
     console.log(event.target.value);
@@ -25,28 +48,47 @@ function App() {
   const onButtonSubmit = () => {
     setImageUrl(input);
     console.log("submit");
-    app.models.predict(Clarifai.FACE_DETECT_MODEL, input).then(
-      (response) => {
-        console.log(
-          response.outputs[0].data.regions[0].region_info.bounding_box
-        );
-      },
-      (err) => {
+    app.models
+      .predict(Clarifai.FACE_DETECT_MODEL, input)
+      .then((response) => {
+        // console.log(
+        //   response.outputs[0].data.regions[0].region_info.bounding_box
+        // );
+        displayFace(calculateFaceLocation(response));
+        console.log(box);
+      })
+      .catch((err) => {
         console.log(err);
-      }
-    );
+      });
+  };
+
+  const onRouteChange = (route) => {
+    if (route === "home") {
+      setIsSignedIn(true);
+    } else if (route === "signin") {
+      setIsSignedIn(false);
+    }
+    setRoute(route);
   };
   return (
     <div className="App">
       <ParticlesBg type="cobweb" color="#ffffff" bg={true} />
-      <Navigation />
-      <Logo />
-      <Rank />
-      <ImageLinkForm
-        onInputChange={onInputChange}
-        onButtonSubmit={onButtonSubmit}
-      />
-      <FaceRecognition imageUrl={imageUrl} />
+      <Navigation onRouteChange={onRouteChange} isSignedIn={isSignedIn} />
+      {route === "home" ? (
+        <React.Fragment>
+          <Logo />
+          <Rank />
+          <ImageLinkForm
+            onInputChange={onInputChange}
+            onButtonSubmit={onButtonSubmit}
+          />
+          <FaceRecognition box={box} imageUrl={imageUrl} />
+        </React.Fragment>
+      ) : route === "signin" ? (
+        <Signin onRouteChange={onRouteChange} />
+      ) : (
+        <Register onRouteChange={onRouteChange} />
+      )}
     </div>
   );
 }
