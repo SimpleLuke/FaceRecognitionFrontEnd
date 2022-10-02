@@ -1,4 +1,30 @@
+import { useState } from "react";
+
 const Signin = ({ onRouteChange }) => {
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+
+  const onEmailChange = (event) => {
+    setEmailInput(event.target.value);
+  };
+  const onPasswordChange = (event) => {
+    setPasswordInput(event.target.value);
+  };
+
+  const onSubmitSignIn = async () => {
+    const response = await fetch("http://localhost:5000/signin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: emailInput,
+        password: passwordInput,
+      }),
+    });
+    const data = await response.json();
+    if (data === "success") {
+      onRouteChange("home");
+    }
+  };
   return (
     <article className="br3 shadow-5 ba dark-gray b--black-10 mv4 w-100 w-50-m w-25-1 mw6 center ">
       <main className="pa4 black-80">
@@ -10,6 +36,7 @@ const Signin = ({ onRouteChange }) => {
                 Email
               </label>
               <input
+                onChange={onEmailChange}
                 className="pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="email"
                 name="email-address"
@@ -21,6 +48,7 @@ const Signin = ({ onRouteChange }) => {
                 Password
               </label>
               <input
+                onChange={onPasswordChange}
                 className="b pa2 input-reset ba bg-transparent hover-bg-black hover-white w-100"
                 type="password"
                 name="password"
@@ -30,7 +58,7 @@ const Signin = ({ onRouteChange }) => {
           </fieldset>
           <div className="">
             <input
-              onClick={() => onRouteChange("home")}
+              onClick={onSubmitSignIn}
               className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6 dib"
               type="submit"
               value="Sign in"

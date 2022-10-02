@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
@@ -15,12 +15,22 @@ const app = new Clarifai.App({
   apiKey: "281642c988874866a01294b2099a4f97",
 });
 
-function App() {
+const App = () => {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [box, setBox] = useState({});
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState(false);
+
+  const getData = async () => {
+    const response = await fetch("http://localhost:5000/");
+    const data = await response.json();
+    console.log(data);
+  };
+
+  useEffect(() => {
+    // getData();
+  }, []);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace =
@@ -41,7 +51,6 @@ function App() {
   };
 
   const onInputChange = (event) => {
-    console.log(event.target.value);
     setInput(event.target.value);
   };
 
@@ -91,6 +100,6 @@ function App() {
       )}
     </div>
   );
-}
+};
 
 export default App;
