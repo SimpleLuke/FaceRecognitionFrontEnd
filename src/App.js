@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Navigation from "./components/Navigation/Navigation";
 import Logo from "./components/Logo/Logo";
@@ -21,16 +21,25 @@ const App = () => {
   const [box, setBox] = useState({});
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState(false);
+  const [user, setUser] = useState({
+    id: "",
+    name: "",
+    email: "",
+    password: "",
+    entries: 0,
+    joined: "",
+  });
 
-  const getData = async () => {
-    const response = await fetch("http://localhost:5000/");
-    const data = await response.json();
-    console.log(data);
+  const loadUser = (data) => {
+    setUser({
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      entries: data.entries,
+      joined: data.joined,
+    });
   };
-
-  useEffect(() => {
-    // getData();
-  }, []);
 
   const calculateFaceLocation = (data) => {
     const clarifaiFace =
@@ -60,14 +69,26 @@ const App = () => {
     app.models
       .predict(Clarifai.FACE_DETECT_MODEL, input)
       .then((response) => {
-        // console.log(
-        //   response.outputs[0].data.regions[0].region_info.bounding_box
-        // );
+        if (response) {
+          fetch("http://localhost:5000/image", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: user.id,
+            }),
+          })
+            .then((response) => response.json())
+            .then((count) => {
+              setUser((user) => {
+                return { ...user, entries: count };
+              });
+            });
+        }
         displayFace(calculateFaceLocation(response));
-        console.log(box);
+        // console.log(box);
       })
       .catch((err) => {
-        console.log(err);
+        console.log("something went wrong", err);
       });
   };
 
@@ -86,7 +107,7 @@ const App = () => {
       {route === "home" ? (
         <React.Fragment>
           <Logo />
-          <Rank />
+          <Rank user={user} />
           <ImageLinkForm
             onInputChange={onInputChange}
             onButtonSubmit={onButtonSubmit}
@@ -94,9 +115,9 @@ const App = () => {
           <FaceRecognition box={box} imageUrl={imageUrl} />
         </React.Fragment>
       ) : route === "signin" ? (
-        <Signin onRouteChange={onRouteChange} />
+        <Signin loadUser={loadUser} onRouteChange={onRouteChange} />
       ) : (
-        <Register onRouteChange={onRouteChange} />
+        <Register loadUser={loadUser} onRouteChange={onRouteChange} />
       )}
     </div>
   );

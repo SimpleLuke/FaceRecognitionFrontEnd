@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Signin = ({ onRouteChange }) => {
+const Signin = ({ onRouteChange, loadUser }) => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
 
@@ -21,7 +21,8 @@ const Signin = ({ onRouteChange }) => {
       }),
     });
     const data = await response.json();
-    if (data === "success") {
+    if (data.id) {
+      loadUser(data);
       onRouteChange("home");
     }
   };
