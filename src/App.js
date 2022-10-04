@@ -18,7 +18,7 @@ const app = new Clarifai.App({
 const App = () => {
   const [input, setInput] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [box, setBox] = useState({});
+  const [box, setBox] = useState([]);
   const [route, setRoute] = useState("signin");
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState({
@@ -42,17 +42,24 @@ const App = () => {
   };
 
   const calculateFaceLocation = (data) => {
-    const clarifaiFace =
-      data.outputs[0].data.regions[0].region_info.bounding_box;
+    const clarifaiFace = [];
+    data.outputs[0].data.regions.map((data) =>
+      clarifaiFace.push(data.region_info.bounding_box)
+    );
     const image = document.getElementById("inputimage");
     const width = Number(image.width);
     const height = Number(image.height);
-    return {
-      leftCol: clarifaiFace.left_col * width,
-      topRow: clarifaiFace.top_row * height,
-      rightCol: width - clarifaiFace.right_col * width,
-      bottomRow: height - clarifaiFace.bottom_row * height,
-    };
+    clarifaiFace.forEach((face) => {
+      setBox((oldArray) => [
+        ...oldArray,
+        {
+          leftCol: face.left_col * width,
+          topRow: face.top_row * height,
+          rightCol: width - face.right_col * width,
+          bottomRow: height - face.bottom_row * height,
+        },
+      ]);
+    });
   };
 
   const displayFace = (data) => {
@@ -64,6 +71,7 @@ const App = () => {
   };
 
   const onButtonSubmit = () => {
+    setBox([]);
     setImageUrl(input);
     console.log("submit");
     app.models
@@ -84,7 +92,10 @@ const App = () => {
               });
             });
         }
-        displayFace(calculateFaceLocation(response));
+        console.log(response);
+
+        calculateFaceLocation(response);
+
         // console.log(box);
       })
       .catch((err) => {
