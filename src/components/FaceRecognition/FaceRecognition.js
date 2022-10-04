@@ -1,6 +1,6 @@
 import "./FaceRecognition.css";
 const FaceRecognition = ({ imageUrl, box }) => {
-  console.log(box);
+  // console.log(box);
   return (
     <div className="center ma">
       <div className="absolute mt2">
@@ -13,6 +13,7 @@ const FaceRecognition = ({ imageUrl, box }) => {
         />
         {box.map((frame) => (
           <div
+            key={Math.random()}
             className="bounding-box"
             style={{
               top: frame.topRow,

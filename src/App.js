@@ -62,9 +62,9 @@ const App = () => {
     });
   };
 
-  const displayFace = (data) => {
-    setBox(data);
-  };
+  // const displayFace = (data) => {
+  //   setBox(data);
+  // };
 
   const onInputChange = (event) => {
     setInput(event.target.value);
@@ -90,13 +90,11 @@ const App = () => {
               setUser((user) => {
                 return { ...user, entries: count };
               });
-            });
+            })
+            .catch(console.log);
         }
-        console.log(response);
 
         calculateFaceLocation(response);
-
-        // console.log(box);
       })
       .catch((err) => {
         console.log("something went wrong", err);
@@ -108,6 +106,7 @@ const App = () => {
       setIsSignedIn(true);
     } else if (route === "signin") {
       setIsSignedIn(false);
+      setImageUrl("");
     }
     setRoute(route);
   };
