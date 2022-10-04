@@ -3,6 +3,7 @@ import { useState } from "react";
 const Signin = ({ onRouteChange, loadUser }) => {
   const [emailInput, setEmailInput] = useState("");
   const [passwordInput, setPasswordInput] = useState("");
+  const [errorText, setErrorText] = useState(false);
 
   const onEmailChange = (event) => {
     setEmailInput(event.target.value);
@@ -24,6 +25,9 @@ const Signin = ({ onRouteChange, loadUser }) => {
     if (data.id) {
       loadUser(data);
       onRouteChange("home");
+      setErrorText(false);
+    } else {
+      setErrorText(true);
     }
   };
   return (
@@ -57,6 +61,11 @@ const Signin = ({ onRouteChange, loadUser }) => {
               />
             </div>
           </fieldset>
+          {errorText && (
+            <p style={{ color: "red", marginTop: "-10px" }}>
+              Wrong credentials
+            </p>
+          )}
           <div className="">
             <input
               onClick={onSubmitSignIn}
