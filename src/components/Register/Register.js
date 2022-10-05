@@ -26,9 +26,9 @@ const Register = ({ onRouteChange, loadUser }) => {
         password: passwordInput,
       }),
     });
-    const data = await response.json();
-    if (data) {
-      loadUser(data);
+    const user = await response.json();
+    if (user.id) {
+      loadUser(user);
       onRouteChange("home");
     }
   };
