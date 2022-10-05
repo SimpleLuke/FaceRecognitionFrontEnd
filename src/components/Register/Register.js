@@ -17,15 +17,18 @@ const Register = ({ onRouteChange, loadUser }) => {
   };
 
   const onSubmitRegister = async () => {
-    const response = await fetch("http://localhost:5000/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: nameInput,
-        email: emailInput,
-        password: passwordInput,
-      }),
-    });
+    const response = await fetch(
+      "https://glacial-sands-34875.herokuapp.com/register",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameInput,
+          email: emailInput,
+          password: passwordInput,
+        }),
+      }
+    );
     const user = await response.json();
     if (user.id) {
       loadUser(user);
