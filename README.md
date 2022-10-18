@@ -34,8 +34,9 @@ Users should be able to:
 - React JS
 - Node.js
 - Express.js
-- PostgreSQL
 - REST API
+- PostgreSQL
+
 
 ## Author
 
