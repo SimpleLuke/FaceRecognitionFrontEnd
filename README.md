@@ -1,5 +1,5 @@
 
-This is a face recognition app built with the React, Node.js, Express.js and PostgreSQL. User can post a image link to find out the faces on the picture.
+This is a face recognition app built with the React, Node.js, Express.js and PostgreSQL. Users can post a image link to find out the faces on the picture.
 
 ## Table of contents
 
