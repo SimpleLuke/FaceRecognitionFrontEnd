@@ -25,10 +25,6 @@ Users should be able to:
 <img src="https://d33wubrfki0l68.cloudfront.net/3a6058529df71493703e464a838d29b7f478375e/ac52e/images/detail/desktop/smart-brain-desktop.jpg" width="400" />
 
 
-### Links
-
-- Live Site: [Click here](https://smart-brain1uk3.herokuapp.com/)
-
 ### Built with
 
 - React JS
